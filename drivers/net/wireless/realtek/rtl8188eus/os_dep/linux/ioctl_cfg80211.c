@@ -1024,7 +1024,7 @@ void rtw_cfg80211_indicate_connect(_adapter *padapter)
 #endif
 	struct cfg80211_bss *bss = NULL;
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 12, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 9, 0)
 	struct cfg80211_roam_info roam_info ={};
 #endif
 
@@ -1092,7 +1092,7 @@ check_bss:
 		struct ieee80211_channel *notify_channel;
 		u32 freq;
 		u16 channel = cur_network->network.Configuration.DSConfig;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 12, 0))
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 9, 0))
 		struct cfg80211_roam_info roam_info;
 #endif
 
@@ -1100,7 +1100,7 @@ check_bss:
 		notify_channel = ieee80211_get_channel(wiphy, freq);
 		#endif
 
-		#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 12, 0)
+		#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 9, 0)
 		roam_info.bssid = cur_network->network.MacAddress;
 		roam_info.req_ie = pmlmepriv->assoc_req + sizeof(struct rtw_ieee80211_hdr_3addr) + 2;
 		roam_info.req_ie_len = pmlmepriv->assoc_req_len - sizeof(struct rtw_ieee80211_hdr_3addr) - 2;
@@ -1119,7 +1119,7 @@ check_bss:
 			, pmlmepriv->assoc_rsp + sizeof(struct rtw_ieee80211_hdr_3addr) + 6
 			, pmlmepriv->assoc_rsp_len - sizeof(struct rtw_ieee80211_hdr_3addr) - 6
 			, GFP_ATOMIC);
-		#endif /*LINUX_VERSION_CODE >= KERNEL_VERSION(4, 12, 0)*/
+		#endif /*LINUX_VERSION_CODE >= KERNEL_VERSION(4, 9, 0)*/
 
 		RTW_INFO(FUNC_ADPT_FMT" call cfg80211_roamed\n", FUNC_ADPT_ARG(padapter));
 
@@ -2292,12 +2292,11 @@ enum nl80211_iftype {
 };
 #endif
 static int cfg80211_rtw_change_iface(struct wiphy *wiphy,
-				     struct net_device *ndev,
-				     enum nl80211_iftype type,
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0))
-				     u32 *flags,
-#endif
-				     struct vif_params *params)
+                                     struct net_device *ndev,
+                                     enum nl80211_iftype type,
+                                     // Remove or comment out the version check here
+                                     u32 *flags, 
+                                     struct vif_params *params)
 {
 	enum nl80211_iftype old_type;
 	NDIS_802_11_NETWORK_INFRASTRUCTURE networkType;
@@ -4537,9 +4536,7 @@ static int
 		unsigned char name_assign_type,
 		#endif
 		enum nl80211_iftype type,
-		#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0))
 		u32 *flags,
-		#endif
 		struct vif_params *params)
 {
 	int ret = 0;
@@ -9087,7 +9084,7 @@ static void rtw_cfg80211_preinit_wiphy(_adapter *adapter, struct wiphy *wiphy)
 #endif
 
 #if defined(CONFIG_PM) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 0, 0) && \
-			   LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0))
+			   LINUX_VERSION_CODE < KERNEL_VERSION(4, 9, 0))
 	wiphy->flags |= WIPHY_FLAG_SUPPORTS_SCHED_SCAN;
 #ifdef CONFIG_PNO_SUPPORT
 	wiphy->max_sched_scan_ssids = MAX_PNO_LIST_COUNT;
